@@ -1,0 +1,51 @@
+name: Regenerate Provider Code
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "openapi/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - uses: jdx/mise-action@v2
+
+      - name: Install codegen tools
+        run: |
+          go install github.com/hashicorp/terraform-plugin-codegen-openapi/cmd/tfplugingen-openapi@latest
+          go install github.com/hashicorp/terraform-plugin-codegen-framework/cmd/tfplugingen-framework@latest
+
+      - name: Generate provider code
+        run: mise run generate
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git diff --quiet && echo "changed=false" >> "$GITHUB_OUTPUT" || echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Create Pull Request
+        if: steps.changes.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: regenerate provider code from OpenAPI spec"
+          title: "chore: regenerate provider code from OpenAPI spec"
+          body: |
+            This PR was auto-generated because the OpenAPI spec changed.
+            Please review the generated code for correctness.
+          branch: chore/regen-provider-code
+          delete-branch: true
+          labels: |
+            automated
+            codegen

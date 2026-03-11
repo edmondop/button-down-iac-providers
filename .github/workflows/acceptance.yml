@@ -1,0 +1,22 @@
+name: Acceptance Tests
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    if: ${{ vars.HAS_BUTTONDOWN_API_KEY == 'true' }}
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+      - name: Run acceptance tests
+        env:
+          TF_ACC: "1"
+          BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
+        run: mise run testacc

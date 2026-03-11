@@ -1,0 +1,60 @@
+min_version = "2025.1.0"
+
+[env]
+_.path = ["./bin", "./node_modules/.bin"]
+CGO_ENABLED = "0"
+
+[tools]
+go = "1.25"
+node = "22"
+
+[tasks.build]
+description = "Build the Terraform provider"
+dir = "terraform-provider-buttondown"
+run = "go build -trimpath -o ../bin/terraform-provider-buttondown ./..."
+sources = ["**/*.go", "go.mod", "go.sum"]
+outputs = ["../bin/terraform-provider-buttondown"]
+
+[tasks.test]
+description = "Run unit tests"
+dir = "terraform-provider-buttondown"
+run = "go test ./... -v -count=1 -parallel=4"
+
+[tasks.testacc]
+description = "Run acceptance tests (requires BUTTONDOWN_API_KEY)"
+dir = "terraform-provider-buttondown"
+env = { TF_ACC = "1" }
+run = "go test ./... -v -count=1 -timeout 120m"
+
+[tasks.lint]
+description = "Run golangci-lint"
+dir = "terraform-provider-buttondown"
+run = "golangci-lint run ./..."
+
+[tasks.fmt]
+description = "Format Go and Terraform files"
+run = """
+cd terraform-provider-buttondown && gofmt -w .
+terraform fmt -recursive examples/ 2>/dev/null || true
+"""
+
+[tasks.generate]
+description = "Regenerate provider code from OpenAPI spec"
+run = """
+tfplugingen-openapi generate \
+  --config generator_config.yml \
+  --output provider_code_spec.json \
+  openapi/openapi.json
+tfplugingen-framework generate all \
+  --input provider_code_spec.json \
+  --output terraform-provider-buttondown/internal/provider
+"""
+
+[tasks.docs]
+description = "Generate Terraform provider documentation"
+dir = "terraform-provider-buttondown"
+run = "tfplugindocs generate --provider-name buttondown"
+
+[tasks.ci]
+description = "Run all CI checks"
+depends = ["fmt", "lint", "test"]

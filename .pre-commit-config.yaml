@@ -1,0 +1,36 @@
+repos:
+  - repo: https://github.com/dnephin/pre-commit-golang
+    rev: v0.5.1
+    hooks:
+      - id: go-fmt
+      - id: go-mod-tidy
+
+  - repo: https://github.com/golangci/golangci-lint
+    rev: v2.1.0
+    hooks:
+      - id: golangci-lint
+
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.96.0
+    hooks:
+      - id: terraform_fmt
+        args:
+          - --args=-recursive
+
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v4.0.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args:
+          - feat
+          - fix
+          - docs
+          - style
+          - refactor
+          - perf
+          - test
+          - build
+          - ci
+          - chore
+          - revert
