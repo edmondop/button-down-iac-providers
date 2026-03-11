@@ -82,9 +82,23 @@ func (p *ButtondownProvider) Configure(ctx context.Context, req provider.Configu
 }
 
 func (p *ButtondownProvider) Resources(_ context.Context) []func() resource.Resource {
-	return []func() resource.Resource{}
+	return []func() resource.Resource{
+		NewTagResource,
+		NewEmailResource,
+		NewAutomationResource,
+		NewWebhookResource,
+		NewSnippetResource,
+		NewFormResource,
+		NewExternalFeedResource,
+		NewSurveyResource,
+		NewBookResource,
+		NewUserResource,
+		NewNewsletterResource,
+	}
 }
 
 func (p *ButtondownProvider) DataSources(_ context.Context) []func() datasource.DataSource {
-	return []func() datasource.DataSource{}
+	return []func() datasource.DataSource{
+		NewAccountDataSource,
+	}
 }

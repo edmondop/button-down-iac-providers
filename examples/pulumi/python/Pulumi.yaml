@@ -1,0 +1,6 @@
+name: buttondown-newsletter
+runtime: python
+description: Manage Buttondown newsletter with Pulumi
+config:
+  buttondown:apiKey:
+    secret: true

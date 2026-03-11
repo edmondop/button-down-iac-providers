@@ -7,6 +7,8 @@ CGO_ENABLED = "0"
 [tools]
 go = "1.25"
 node = "22"
+terraform = "1.9"
+"go:github.com/golangci/golangci-lint/cmd/golangci-lint" = "latest"
 
 [tasks.build]
 description = "Build the Terraform provider"
