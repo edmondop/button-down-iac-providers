@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"testing"
@@ -21,13 +22,13 @@ func TestEmailResource_creates_as_draft(t *testing.T) {
 	server.Config.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost && r.URL.Path == "/v1/emails" {
 			var input client.EmailInput
-			json.NewDecoder(r.Body).Decode(&input)
+			_ = json.NewDecoder(r.Body).Decode(&input)
 			if input.Status != "draft" {
 				t.Errorf("expected status 'draft', got %q", input.Status)
 			}
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusCreated)
-			json.NewEncoder(w).Encode(email)
+			_ = json.NewEncoder(w).Encode(email)
 			return
 		}
 		originalHandler.ServeHTTP(w, r)
@@ -57,7 +58,7 @@ func TestEmailResource_status_is_computed_only(t *testing.T) {
 	// Verify the schema marks status as Computed-only (no Optional)
 	r := &EmailResource{}
 	schemaResp := fwresource.SchemaResponse{}
-	r.Schema(nil, fwresource.SchemaRequest{}, &schemaResp)
+	r.Schema(context.TODO(), fwresource.SchemaRequest{}, &schemaResp)
 
 	statusAttr := schemaResp.Schema.Attributes["status"]
 	if statusAttr == nil {

@@ -41,7 +41,7 @@ func newMockServer(t *testing.T, routes []mockRoute) *httptest.Server {
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(route.status)
 				if route.body != nil {
-					json.NewEncoder(w).Encode(route.body)
+					_ = json.NewEncoder(w).Encode(route.body)
 				}
 				return
 			}
@@ -53,7 +53,7 @@ func newMockServer(t *testing.T, routes []mockRoute) *httptest.Server {
 		}
 		t.Logf("unhandled request: %s %s", r.Method, r.URL.Path)
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(map[string]string{"detail": "Not found."})
+		_ = json.NewEncoder(w).Encode(map[string]string{"detail": "Not found."})
 	}))
 	t.Cleanup(server.Close)
 	return server
@@ -89,7 +89,7 @@ func mockHandler(t *testing.T, w http.ResponseWriter, r *http.Request, routes []
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(route.status)
 			if route.body != nil {
-				json.NewEncoder(w).Encode(route.body)
+				_ = json.NewEncoder(w).Encode(route.body)
 			}
 			return
 		}
@@ -100,5 +100,5 @@ func mockHandler(t *testing.T, w http.ResponseWriter, r *http.Request, routes []
 	}
 	t.Logf("unhandled request: %s %s", r.Method, r.URL.Path)
 	w.WriteHeader(http.StatusNotFound)
-	json.NewEncoder(w).Encode(map[string]string{"detail": "Not found."})
+	_ = json.NewEncoder(w).Encode(map[string]string{"detail": "Not found."})
 }

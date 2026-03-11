@@ -25,7 +25,7 @@ func TestClient_Get_returns_resource(t *testing.T) {
 			t.Errorf("unexpected auth header: %s", r.Header.Get("Authorization"))
 		}
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(Account{Username: "test", EmailAddress: "test@example.com"})
+		_ = json.NewEncoder(w).Encode(Account{Username: "test", EmailAddress: "test@example.com"})
 	})
 
 	var account Account
@@ -47,12 +47,12 @@ func TestClient_Post_sends_body_and_returns_result(t *testing.T) {
 			t.Errorf("expected JSON content type, got %q", r.Header.Get("Content-Type"))
 		}
 		var input TagInput
-		json.NewDecoder(r.Body).Decode(&input)
+		_ = json.NewDecoder(r.Body).Decode(&input)
 		if input.Name != "test-tag" {
 			t.Errorf("expected name 'test-tag', got %q", input.Name)
 		}
 		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(Tag{ID: "tag-123", Name: input.Name, Color: input.Color})
+		_ = json.NewEncoder(w).Encode(Tag{ID: "tag-123", Name: input.Name, Color: input.Color})
 	})
 
 	var tag Tag
@@ -71,7 +71,7 @@ func TestClient_Patch_sends_partial_update(t *testing.T) {
 			t.Errorf("expected PATCH, got %s", r.Method)
 		}
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(Tag{ID: "tag-123", Name: "updated", Color: "#00ff00"})
+		_ = json.NewEncoder(w).Encode(Tag{ID: "tag-123", Name: "updated", Color: "#00ff00"})
 	})
 
 	var tag Tag
@@ -102,7 +102,7 @@ func TestClient_Delete_succeeds_on_204(t *testing.T) {
 func TestClient_returns_APIError_on_404(t *testing.T) {
 	c, _ := testServer(t, func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(map[string]string{"detail": "Not found."})
+		_ = json.NewEncoder(w).Encode(map[string]string{"detail": "Not found."})
 	})
 
 	var tag Tag
@@ -122,7 +122,7 @@ func TestClient_returns_APIError_on_404(t *testing.T) {
 func TestClient_List_returns_paginated_results(t *testing.T) {
 	c, _ := testServer(t, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(PageResponse[Tag]{
+		_ = json.NewEncoder(w).Encode(PageResponse[Tag]{
 			Count: 2,
 			Results: []Tag{
 				{ID: "1", Name: "tag1"},

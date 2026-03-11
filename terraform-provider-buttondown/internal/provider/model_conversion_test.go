@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"context"
 	"testing"
 
 	"github.com/edmondop/terraform-provider-buttondown/internal/client"
@@ -78,7 +79,7 @@ func TestNewsletterToModel_maps_all_fields(t *testing.T) {
 func TestTagSchema_name_is_required(t *testing.T) {
 	r := &TagResource{}
 	resp := fwresource.SchemaResponse{}
-	r.Schema(nil, fwresource.SchemaRequest{}, &resp)
+	r.Schema(context.TODO(), fwresource.SchemaRequest{}, &resp)
 
 	nameAttr := resp.Schema.Attributes["name"]
 	if !nameAttr.IsRequired() {
@@ -89,7 +90,7 @@ func TestTagSchema_name_is_required(t *testing.T) {
 func TestTagSchema_id_is_computed(t *testing.T) {
 	r := &TagResource{}
 	resp := fwresource.SchemaResponse{}
-	r.Schema(nil, fwresource.SchemaRequest{}, &resp)
+	r.Schema(context.TODO(), fwresource.SchemaRequest{}, &resp)
 
 	idAttr := resp.Schema.Attributes["id"]
 	if !idAttr.IsComputed() {
@@ -103,7 +104,7 @@ func TestTagSchema_id_is_computed(t *testing.T) {
 func TestNewsletterSchema_description_is_required(t *testing.T) {
 	r := &NewsletterResource{}
 	resp := fwresource.SchemaResponse{}
-	r.Schema(nil, fwresource.SchemaRequest{}, &resp)
+	r.Schema(context.TODO(), fwresource.SchemaRequest{}, &resp)
 
 	for _, field := range []string{"name", "username", "description"} {
 		attr := resp.Schema.Attributes[field]
@@ -116,7 +117,7 @@ func TestNewsletterSchema_description_is_required(t *testing.T) {
 func TestProviderSchema_api_key_is_sensitive(t *testing.T) {
 	p := &ButtondownProvider{version: "test"}
 	resp := fwprovider.SchemaResponse{}
-	p.Schema(nil, fwprovider.SchemaRequest{}, &resp)
+	p.Schema(context.TODO(), fwprovider.SchemaRequest{}, &resp)
 
 	apiKeyAttr := resp.Schema.Attributes["api_key"]
 	if !apiKeyAttr.IsSensitive() {
