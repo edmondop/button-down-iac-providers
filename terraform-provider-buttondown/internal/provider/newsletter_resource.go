@@ -66,7 +66,9 @@ func (r *NewsletterResource) Schema(_ context.Context, _ resource.SchemaRequest,
 }
 
 func (r *NewsletterResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil { return }
+	if req.ProviderData == nil {
+		return
+	}
 	c, ok := req.ProviderData.(*client.Client)
 	if !ok {
 		resp.Diagnostics.AddError("Unexpected type", fmt.Sprintf("Expected *client.Client, got: %T", req.ProviderData))
@@ -78,7 +80,9 @@ func (r *NewsletterResource) Configure(_ context.Context, req resource.Configure
 func (r *NewsletterResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan NewsletterResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
-	if resp.Diagnostics.HasError() { return }
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	input := client.NewsletterInput{
 		Name: plan.Name.ValueString(), Username: plan.Username.ValueString(),
 		Description: plan.Description.ValueString(),
@@ -94,7 +98,9 @@ func (r *NewsletterResource) Create(ctx context.Context, req resource.CreateRequ
 func (r *NewsletterResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state NewsletterResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-	if resp.Diagnostics.HasError() { return }
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Newsletters have no GET-by-ID endpoint, so we list and filter
 	n, err := r.findNewsletterByID(ctx, state.ID.ValueString())
@@ -113,20 +119,58 @@ func (r *NewsletterResource) Update(ctx context.Context, req resource.UpdateRequ
 	var plan, state NewsletterResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-	if resp.Diagnostics.HasError() { return }
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	input := client.NewsletterUpdateInput{}
-	if !plan.Name.Equal(state.Name) { v := plan.Name.ValueString(); input.Name = &v }
-	if !plan.Description.Equal(state.Description) { v := plan.Description.ValueString(); input.Description = &v }
-	if !plan.Domain.Equal(state.Domain) { v := plan.Domain.ValueString(); input.Domain = &v }
-	if !plan.CSS.Equal(state.CSS) { v := plan.CSS.ValueString(); input.CSS = &v }
-	if !plan.Footer.Equal(state.Footer) { v := plan.Footer.ValueString(); input.Footer = &v }
-	if !plan.Header.Equal(state.Header) { v := plan.Header.ValueString(); input.Header = &v }
-	if !plan.FromName.Equal(state.FromName) { v := plan.FromName.ValueString(); input.FromName = &v }
-	if !plan.Locale.Equal(state.Locale) { v := plan.Locale.ValueString(); input.Locale = &v }
-	if !plan.Template.Equal(state.Template) { v := plan.Template.ValueString(); input.Template = &v }
-	if !plan.ArchiveTheme.Equal(state.ArchiveTheme) { v := plan.ArchiveTheme.ValueString(); input.ArchiveTheme = &v }
-	if !plan.TintColor.Equal(state.TintColor) { v := plan.TintColor.ValueString(); input.TintColor = &v }
-	if !plan.Timezone.Equal(state.Timezone) { v := plan.Timezone.ValueString(); input.Timezone = &v }
+	if !plan.Name.Equal(state.Name) {
+		v := plan.Name.ValueString()
+		input.Name = &v
+	}
+	if !plan.Description.Equal(state.Description) {
+		v := plan.Description.ValueString()
+		input.Description = &v
+	}
+	if !plan.Domain.Equal(state.Domain) {
+		v := plan.Domain.ValueString()
+		input.Domain = &v
+	}
+	if !plan.CSS.Equal(state.CSS) {
+		v := plan.CSS.ValueString()
+		input.CSS = &v
+	}
+	if !plan.Footer.Equal(state.Footer) {
+		v := plan.Footer.ValueString()
+		input.Footer = &v
+	}
+	if !plan.Header.Equal(state.Header) {
+		v := plan.Header.ValueString()
+		input.Header = &v
+	}
+	if !plan.FromName.Equal(state.FromName) {
+		v := plan.FromName.ValueString()
+		input.FromName = &v
+	}
+	if !plan.Locale.Equal(state.Locale) {
+		v := plan.Locale.ValueString()
+		input.Locale = &v
+	}
+	if !plan.Template.Equal(state.Template) {
+		v := plan.Template.ValueString()
+		input.Template = &v
+	}
+	if !plan.ArchiveTheme.Equal(state.ArchiveTheme) {
+		v := plan.ArchiveTheme.ValueString()
+		input.ArchiveTheme = &v
+	}
+	if !plan.TintColor.Equal(state.TintColor) {
+		v := plan.TintColor.ValueString()
+		input.TintColor = &v
+	}
+	if !plan.Timezone.Equal(state.Timezone) {
+		v := plan.Timezone.ValueString()
+		input.Timezone = &v
+	}
 	var n client.Newsletter
 	if err := r.client.Patch(ctx, "/v1/newsletters/"+state.ID.ValueString(), input, &n); err != nil {
 		resp.Diagnostics.AddError("Error updating newsletter", err.Error())
@@ -138,7 +182,9 @@ func (r *NewsletterResource) Update(ctx context.Context, req resource.UpdateRequ
 func (r *NewsletterResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state NewsletterResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-	if resp.Diagnostics.HasError() { return }
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	if err := r.client.Delete(ctx, "/v1/newsletters/"+state.ID.ValueString()); err != nil {
 		resp.Diagnostics.AddError("Error deleting newsletter", err.Error())
 	}

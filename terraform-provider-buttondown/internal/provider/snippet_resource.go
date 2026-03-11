@@ -110,16 +110,20 @@ func (r *SnippetResource) Update(ctx context.Context, req resource.UpdateRequest
 	}
 	input := client.SnippetUpdateInput{}
 	if !plan.Identifier.Equal(state.Identifier) {
-		v := plan.Identifier.ValueString(); input.Identifier = &v
+		v := plan.Identifier.ValueString()
+		input.Identifier = &v
 	}
 	if !plan.Name.Equal(state.Name) {
-		v := plan.Name.ValueString(); input.Name = &v
+		v := plan.Name.ValueString()
+		input.Name = &v
 	}
 	if !plan.Content.Equal(state.Content) {
-		v := plan.Content.ValueString(); input.Content = &v
+		v := plan.Content.ValueString()
+		input.Content = &v
 	}
 	if !plan.Mode.Equal(state.Mode) {
-		v := plan.Mode.ValueString(); input.Mode = &v
+		v := plan.Mode.ValueString()
+		input.Mode = &v
 	}
 	var s client.Snippet
 	if err := r.client.Patch(ctx, "/v1/snippets/"+state.ID.ValueString(), input, &s); err != nil {

@@ -29,7 +29,7 @@ type WebhookResourceModel struct {
 	EventTypes  types.List   `tfsdk:"event_types"`
 	Status      types.String `tfsdk:"status"`
 	Description types.String `tfsdk:"description"`
-	SigningKey   types.String `tfsdk:"signing_key"`
+	SigningKey  types.String `tfsdk:"signing_key"`
 }
 
 func NewWebhookResource() resource.Resource {
@@ -210,6 +210,6 @@ func webhookToModel(ctx context.Context, w *client.Webhook, diags *diag.Diagnost
 		EventTypes:  eventTypes,
 		Status:      types.StringValue(w.Status),
 		Description: types.StringValue(w.Description),
-		SigningKey:   types.StringValue(w.SigningKey),
+		SigningKey:  types.StringValue(w.SigningKey),
 	}
 }

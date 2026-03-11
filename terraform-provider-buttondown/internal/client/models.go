@@ -109,15 +109,15 @@ type EmailUpdateInput struct {
 // Automation
 
 type Automation struct {
-	ID                              string       `json:"id"`
-	CreationDate                    time.Time    `json:"creation_date"`
-	Name                            string       `json:"name"`
-	Status                          string       `json:"status"`
-	Trigger                         string       `json:"trigger"`
-	Actions                         []Action     `json:"actions"`
-	Filters                         *FilterGroup `json:"filters"`
-	Metadata                        Metadata     `json:"metadata"`
-	ShouldEvaluateFilterAfterDelay  bool         `json:"should_evaluate_filter_after_delay"`
+	ID                             string       `json:"id"`
+	CreationDate                   time.Time    `json:"creation_date"`
+	Name                           string       `json:"name"`
+	Status                         string       `json:"status"`
+	Trigger                        string       `json:"trigger"`
+	Actions                        []Action     `json:"actions"`
+	Filters                        *FilterGroup `json:"filters"`
+	Metadata                       Metadata     `json:"metadata"`
+	ShouldEvaluateFilterAfterDelay bool         `json:"should_evaluate_filter_after_delay"`
 }
 
 type AutomationInput struct {
@@ -156,26 +156,26 @@ type WebhookInput struct {
 	URL         string   `json:"url"`
 	Status      string   `json:"status,omitempty"`
 	Description string   `json:"description,omitempty"`
-	SigningKey   string   `json:"signing_key,omitempty"`
+	SigningKey  string   `json:"signing_key,omitempty"`
 }
 
 // ExternalFeed
 
 type ExternalFeed struct {
-	ID               string            `json:"id"`
-	CreationDate     time.Time         `json:"creation_date"`
-	LastCheckedDate  *time.Time        `json:"last_checked_date"`
-	Status           string            `json:"status"`
-	Behavior         string            `json:"behavior"`
-	Cadence          string            `json:"cadence"`
-	CadenceMetadata  map[string]string `json:"cadence_metadata"`
-	Filters          *FilterGroup      `json:"filters"`
-	URL              string            `json:"url"`
-	Subject          string            `json:"subject"`
-	Body             string            `json:"body"`
-	Label            string            `json:"label"`
-	Metadata         Metadata          `json:"metadata"`
-	SkipOldItems     bool              `json:"skip_old_items"`
+	ID              string            `json:"id"`
+	CreationDate    time.Time         `json:"creation_date"`
+	LastCheckedDate *time.Time        `json:"last_checked_date"`
+	Status          string            `json:"status"`
+	Behavior        string            `json:"behavior"`
+	Cadence         string            `json:"cadence"`
+	CadenceMetadata map[string]string `json:"cadence_metadata"`
+	Filters         *FilterGroup      `json:"filters"`
+	URL             string            `json:"url"`
+	Subject         string            `json:"subject"`
+	Body            string            `json:"body"`
+	Label           string            `json:"label"`
+	Metadata        Metadata          `json:"metadata"`
+	SkipOldItems    bool              `json:"skip_old_items"`
 }
 
 type ExternalFeedInput struct {
@@ -244,40 +244,40 @@ type FormUpdateInput struct {
 // Newsletter
 
 type Newsletter struct {
-	ID                           string            `json:"id"`
-	CreationDate                 time.Time         `json:"creation_date"`
-	APIKey                       string            `json:"api_key"`
-	Name                         string            `json:"name"`
-	Username                     string            `json:"username"`
-	Description                  string            `json:"description"`
-	Domain                       string            `json:"domain"`
-	EmailAddress                 string            `json:"email_address"`
-	EmailDomain                  string            `json:"email_domain"`
-	CSS                          string            `json:"css"`
-	WebCSS                       string            `json:"web_css"`
-	Footer                       string            `json:"footer"`
-	Header                       string            `json:"header"`
-	FromName                     string            `json:"from_name"`
-	ReplyToAddress               string            `json:"reply_to_address"`
-	Icon                         string            `json:"icon"`
-	Image                        string            `json:"image"`
-	Locale                       string            `json:"locale"`
-	Template                     string            `json:"template"`
-	ArchiveTheme                 string            `json:"archive_theme"`
-	TintColor                    string            `json:"tint_color"`
-	Timezone                     string            `json:"timezone"`
-	Metadata                     Metadata          `json:"metadata"`
-	EmailThemeConfiguration      map[string]string `json:"email_theme_configuration"`
-	ThemeConfiguration           map[string]string `json:"theme_configuration"`
-	AnnouncementBarText          string            `json:"announcement_bar_text"`
-	AnnouncementBarBgColor       string            `json:"announcement_bar_background_color"`
-	AnnouncementBarVisibility    string            `json:"announcement_bar_visibility"`
-	AuditingMode                 string            `json:"auditing_mode"`
-	TestMode                     bool              `json:"test_mode"`
-	EnabledFeatures              []string          `json:"enabled_features"`
-	SharingNetworks              []string          `json:"sharing_networks"`
-	SubscriptionRedirectURL      string            `json:"subscription_redirect_url"`
-	SubscriptionConfirmRedirect  string            `json:"subscription_confirmation_redirect_url"`
+	ID                          string            `json:"id"`
+	CreationDate                time.Time         `json:"creation_date"`
+	APIKey                      string            `json:"api_key"`
+	Name                        string            `json:"name"`
+	Username                    string            `json:"username"`
+	Description                 string            `json:"description"`
+	Domain                      string            `json:"domain"`
+	EmailAddress                string            `json:"email_address"`
+	EmailDomain                 string            `json:"email_domain"`
+	CSS                         string            `json:"css"`
+	WebCSS                      string            `json:"web_css"`
+	Footer                      string            `json:"footer"`
+	Header                      string            `json:"header"`
+	FromName                    string            `json:"from_name"`
+	ReplyToAddress              string            `json:"reply_to_address"`
+	Icon                        string            `json:"icon"`
+	Image                       string            `json:"image"`
+	Locale                      string            `json:"locale"`
+	Template                    string            `json:"template"`
+	ArchiveTheme                string            `json:"archive_theme"`
+	TintColor                   string            `json:"tint_color"`
+	Timezone                    string            `json:"timezone"`
+	Metadata                    Metadata          `json:"metadata"`
+	EmailThemeConfiguration     map[string]string `json:"email_theme_configuration"`
+	ThemeConfiguration          map[string]string `json:"theme_configuration"`
+	AnnouncementBarText         string            `json:"announcement_bar_text"`
+	AnnouncementBarBgColor      string            `json:"announcement_bar_background_color"`
+	AnnouncementBarVisibility   string            `json:"announcement_bar_visibility"`
+	AuditingMode                string            `json:"auditing_mode"`
+	TestMode                    bool              `json:"test_mode"`
+	EnabledFeatures             []string          `json:"enabled_features"`
+	SharingNetworks             []string          `json:"sharing_networks"`
+	SubscriptionRedirectURL     string            `json:"subscription_redirect_url"`
+	SubscriptionConfirmRedirect string            `json:"subscription_confirmation_redirect_url"`
 }
 
 type NewsletterInput struct {
@@ -340,18 +340,18 @@ type SnippetUpdateInput struct {
 // Survey
 
 type Survey struct {
-	ID                         string    `json:"id"`
-	CreationDate               time.Time `json:"creation_date"`
-	Identifier                 string    `json:"identifier"`
-	Question                   string    `json:"question"`
-	ResponseCount              int       `json:"response_count"`
-	Answers                    []string  `json:"answers"`
-	Notes                      string    `json:"notes"`
-	RandomizeAnswers           bool      `json:"randomize_answers"`
-	ResponseCadence            string    `json:"response_cadence"`
-	Status                     string    `json:"status"`
-	IsFreeformResponseEnabled  bool      `json:"is_freeform_response_enabled"`
-	InputType                  string    `json:"input_type"`
+	ID                        string    `json:"id"`
+	CreationDate              time.Time `json:"creation_date"`
+	Identifier                string    `json:"identifier"`
+	Question                  string    `json:"question"`
+	ResponseCount             int       `json:"response_count"`
+	Answers                   []string  `json:"answers"`
+	Notes                     string    `json:"notes"`
+	RandomizeAnswers          bool      `json:"randomize_answers"`
+	ResponseCadence           string    `json:"response_cadence"`
+	Status                    string    `json:"status"`
+	IsFreeformResponseEnabled bool      `json:"is_freeform_response_enabled"`
+	InputType                 string    `json:"input_type"`
 }
 
 type SurveyInput struct {

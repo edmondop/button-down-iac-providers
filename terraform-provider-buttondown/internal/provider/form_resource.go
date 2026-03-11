@@ -70,10 +70,18 @@ func (r *FormResource) Create(ctx context.Context, req resource.CreateRequest, r
 		return
 	}
 	input := client.FormInput{Title: plan.Title.ValueString(), Slug: plan.Slug.ValueString()}
-	if !plan.Body.IsNull() { input.Body = plan.Body.ValueString() }
-	if !plan.CSS.IsNull() { input.CSS = plan.CSS.ValueString() }
-	if !plan.SuccessBody.IsNull() { input.SuccessBody = plan.SuccessBody.ValueString() }
-	if !plan.Status.IsNull() { input.Status = plan.Status.ValueString() }
+	if !plan.Body.IsNull() {
+		input.Body = plan.Body.ValueString()
+	}
+	if !plan.CSS.IsNull() {
+		input.CSS = plan.CSS.ValueString()
+	}
+	if !plan.SuccessBody.IsNull() {
+		input.SuccessBody = plan.SuccessBody.ValueString()
+	}
+	if !plan.Status.IsNull() {
+		input.Status = plan.Status.ValueString()
+	}
 	var f client.Form
 	if err := r.client.Post(ctx, "/v1/forms", input, &f); err != nil {
 		resp.Diagnostics.AddError("Error creating form", err.Error())
@@ -90,7 +98,10 @@ func (r *FormResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 	}
 	var f client.Form
 	if err := r.client.Get(ctx, "/v1/forms/"+state.ID.ValueString(), &f); err != nil {
-		if client.IsNotFound(err) { resp.State.RemoveResource(ctx); return }
+		if client.IsNotFound(err) {
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError("Error reading form", err.Error())
 		return
 	}
@@ -105,12 +116,30 @@ func (r *FormResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		return
 	}
 	input := client.FormUpdateInput{}
-	if !plan.Title.Equal(state.Title) { v := plan.Title.ValueString(); input.Title = &v }
-	if !plan.Slug.Equal(state.Slug) { v := plan.Slug.ValueString(); input.Slug = &v }
-	if !plan.Body.Equal(state.Body) { v := plan.Body.ValueString(); input.Body = &v }
-	if !plan.CSS.Equal(state.CSS) { v := plan.CSS.ValueString(); input.CSS = &v }
-	if !plan.SuccessBody.Equal(state.SuccessBody) { v := plan.SuccessBody.ValueString(); input.SuccessBody = &v }
-	if !plan.Status.Equal(state.Status) { v := plan.Status.ValueString(); input.Status = &v }
+	if !plan.Title.Equal(state.Title) {
+		v := plan.Title.ValueString()
+		input.Title = &v
+	}
+	if !plan.Slug.Equal(state.Slug) {
+		v := plan.Slug.ValueString()
+		input.Slug = &v
+	}
+	if !plan.Body.Equal(state.Body) {
+		v := plan.Body.ValueString()
+		input.Body = &v
+	}
+	if !plan.CSS.Equal(state.CSS) {
+		v := plan.CSS.ValueString()
+		input.CSS = &v
+	}
+	if !plan.SuccessBody.Equal(state.SuccessBody) {
+		v := plan.SuccessBody.ValueString()
+		input.SuccessBody = &v
+	}
+	if !plan.Status.Equal(state.Status) {
+		v := plan.Status.ValueString()
+		input.Status = &v
+	}
 	var f client.Form
 	if err := r.client.Patch(ctx, "/v1/forms/"+state.ID.ValueString(), input, &f); err != nil {
 		resp.Diagnostics.AddError("Error updating form", err.Error())
@@ -122,7 +151,9 @@ func (r *FormResource) Update(ctx context.Context, req resource.UpdateRequest, r
 func (r *FormResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state FormResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-	if resp.Diagnostics.HasError() { return }
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	if err := r.client.Delete(ctx, "/v1/forms/"+state.ID.ValueString()); err != nil {
 		resp.Diagnostics.AddError("Error deleting form", err.Error())
 	}

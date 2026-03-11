@@ -27,10 +27,10 @@ provider "buttondown" {
 }
 
 type mockRoute struct {
-	method  string
-	path    string
-	status  int
-	body    any
+	method string
+	path   string
+	status int
+	body   any
 }
 
 func newMockServer(t *testing.T, routes []mockRoute) *httptest.Server {

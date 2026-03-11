@@ -54,7 +54,9 @@ func (r *ExternalFeedResource) Schema(_ context.Context, _ resource.SchemaReques
 }
 
 func (r *ExternalFeedResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil { return }
+	if req.ProviderData == nil {
+		return
+	}
 	c, ok := req.ProviderData.(*client.Client)
 	if !ok {
 		resp.Diagnostics.AddError("Unexpected type", fmt.Sprintf("Expected *client.Client, got: %T", req.ProviderData))
@@ -66,15 +68,19 @@ func (r *ExternalFeedResource) Configure(_ context.Context, req resource.Configu
 func (r *ExternalFeedResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan ExternalFeedResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
-	if resp.Diagnostics.HasError() { return }
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	input := client.ExternalFeedInput{
 		URL: plan.URL.ValueString(), Behavior: plan.Behavior.ValueString(),
 		Cadence: plan.Cadence.ValueString(), Subject: plan.Subject.ValueString(),
-		Body: plan.Body.ValueString(),
+		Body:            plan.Body.ValueString(),
 		CadenceMetadata: map[string]string{},
-		Filters: &client.FilterGroup{Filters: []client.Filter{}, Groups: []client.FilterGroup{}, Predicate: "and"},
+		Filters:         &client.FilterGroup{Filters: []client.Filter{}, Groups: []client.FilterGroup{}, Predicate: "and"},
 	}
-	if !plan.Label.IsNull() { input.Label = plan.Label.ValueString() }
+	if !plan.Label.IsNull() {
+		input.Label = plan.Label.ValueString()
+	}
 	var f client.ExternalFeed
 	if err := r.client.Post(ctx, "/v1/external_feeds", input, &f); err != nil {
 		resp.Diagnostics.AddError("Error creating external feed", err.Error())
@@ -86,10 +92,15 @@ func (r *ExternalFeedResource) Create(ctx context.Context, req resource.CreateRe
 func (r *ExternalFeedResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state ExternalFeedResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-	if resp.Diagnostics.HasError() { return }
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	var f client.ExternalFeed
 	if err := r.client.Get(ctx, "/v1/external_feeds/"+state.ID.ValueString(), &f); err != nil {
-		if client.IsNotFound(err) { resp.State.RemoveResource(ctx); return }
+		if client.IsNotFound(err) {
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError("Error reading external feed", err.Error())
 		return
 	}
@@ -100,14 +111,34 @@ func (r *ExternalFeedResource) Update(ctx context.Context, req resource.UpdateRe
 	var plan, state ExternalFeedResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-	if resp.Diagnostics.HasError() { return }
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	input := client.ExternalFeedUpdateInput{}
-	if !plan.Behavior.Equal(state.Behavior) { v := plan.Behavior.ValueString(); input.Behavior = &v }
-	if !plan.Cadence.Equal(state.Cadence) { v := plan.Cadence.ValueString(); input.Cadence = &v }
-	if !plan.Subject.Equal(state.Subject) { v := plan.Subject.ValueString(); input.Subject = &v }
-	if !plan.Body.Equal(state.Body) { v := plan.Body.ValueString(); input.Body = &v }
-	if !plan.Label.Equal(state.Label) { v := plan.Label.ValueString(); input.Label = &v }
-	if !plan.Status.Equal(state.Status) { v := plan.Status.ValueString(); input.Status = &v }
+	if !plan.Behavior.Equal(state.Behavior) {
+		v := plan.Behavior.ValueString()
+		input.Behavior = &v
+	}
+	if !plan.Cadence.Equal(state.Cadence) {
+		v := plan.Cadence.ValueString()
+		input.Cadence = &v
+	}
+	if !plan.Subject.Equal(state.Subject) {
+		v := plan.Subject.ValueString()
+		input.Subject = &v
+	}
+	if !plan.Body.Equal(state.Body) {
+		v := plan.Body.ValueString()
+		input.Body = &v
+	}
+	if !plan.Label.Equal(state.Label) {
+		v := plan.Label.ValueString()
+		input.Label = &v
+	}
+	if !plan.Status.Equal(state.Status) {
+		v := plan.Status.ValueString()
+		input.Status = &v
+	}
 	var f client.ExternalFeed
 	if err := r.client.Patch(ctx, "/v1/external_feeds/"+state.ID.ValueString(), input, &f); err != nil {
 		resp.Diagnostics.AddError("Error updating external feed", err.Error())
@@ -119,7 +150,9 @@ func (r *ExternalFeedResource) Update(ctx context.Context, req resource.UpdateRe
 func (r *ExternalFeedResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state ExternalFeedResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-	if resp.Diagnostics.HasError() { return }
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	if err := r.client.Delete(ctx, "/v1/external_feeds/"+state.ID.ValueString()); err != nil {
 		resp.Diagnostics.AddError("Error deleting external feed", err.Error())
 	}

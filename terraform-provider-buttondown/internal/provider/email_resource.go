@@ -133,28 +133,36 @@ func (r *EmailResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	}
 	input := client.EmailUpdateInput{}
 	if !plan.Subject.Equal(state.Subject) {
-		v := plan.Subject.ValueString(); input.Subject = &v
+		v := plan.Subject.ValueString()
+		input.Subject = &v
 	}
 	if !plan.Body.Equal(state.Body) {
-		v := plan.Body.ValueString(); input.Body = &v
+		v := plan.Body.ValueString()
+		input.Body = &v
 	}
 	if !plan.Description.Equal(state.Description) {
-		v := plan.Description.ValueString(); input.Description = &v
+		v := plan.Description.ValueString()
+		input.Description = &v
 	}
 	if !plan.Slug.Equal(state.Slug) {
-		v := plan.Slug.ValueString(); input.Slug = &v
+		v := plan.Slug.ValueString()
+		input.Slug = &v
 	}
 	if !plan.CanonicalURL.Equal(state.CanonicalURL) {
-		v := plan.CanonicalURL.ValueString(); input.CanonicalURL = &v
+		v := plan.CanonicalURL.ValueString()
+		input.CanonicalURL = &v
 	}
 	if !plan.Image.Equal(state.Image) {
-		v := plan.Image.ValueString(); input.Image = &v
+		v := plan.Image.ValueString()
+		input.Image = &v
 	}
 	if !plan.CommentingMode.Equal(state.CommentingMode) {
-		v := plan.CommentingMode.ValueString(); input.CommentingMode = &v
+		v := plan.CommentingMode.ValueString()
+		input.CommentingMode = &v
 	}
 	if !plan.Template.Equal(state.Template) {
-		v := plan.Template.ValueString(); input.Template = &v
+		v := plan.Template.ValueString()
+		input.Template = &v
 	}
 	var email client.Email
 	if err := r.client.Patch(ctx, "/v1/emails/"+state.ID.ValueString(), input, &email); err != nil {

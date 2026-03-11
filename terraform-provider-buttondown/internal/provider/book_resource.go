@@ -54,7 +54,9 @@ func (r *BookResource) Schema(_ context.Context, _ resource.SchemaRequest, resp 
 }
 
 func (r *BookResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil { return }
+	if req.ProviderData == nil {
+		return
+	}
 	c, ok := req.ProviderData.(*client.Client)
 	if !ok {
 		resp.Diagnostics.AddError("Unexpected type", fmt.Sprintf("Expected *client.Client, got: %T", req.ProviderData))
@@ -66,14 +68,30 @@ func (r *BookResource) Configure(_ context.Context, req resource.ConfigureReques
 func (r *BookResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan BookResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
-	if resp.Diagnostics.HasError() { return }
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	input := client.BookInput{Title: plan.Title.ValueString()}
-	if !plan.URL.IsNull() { input.URL = plan.URL.ValueString() }
-	if !plan.ImageURL.IsNull() { input.ImageURL = plan.ImageURL.ValueString() }
-	if !plan.Description.IsNull() { input.Description = plan.Description.ValueString() }
-	if !plan.Year.IsNull() { v := int(plan.Year.ValueInt64()); input.Year = &v }
-	if !plan.ISBN.IsNull() { input.ISBN = plan.ISBN.ValueString() }
-	if !plan.Shared.IsNull() { v := plan.Shared.ValueBool(); input.Shared = &v }
+	if !plan.URL.IsNull() {
+		input.URL = plan.URL.ValueString()
+	}
+	if !plan.ImageURL.IsNull() {
+		input.ImageURL = plan.ImageURL.ValueString()
+	}
+	if !plan.Description.IsNull() {
+		input.Description = plan.Description.ValueString()
+	}
+	if !plan.Year.IsNull() {
+		v := int(plan.Year.ValueInt64())
+		input.Year = &v
+	}
+	if !plan.ISBN.IsNull() {
+		input.ISBN = plan.ISBN.ValueString()
+	}
+	if !plan.Shared.IsNull() {
+		v := plan.Shared.ValueBool()
+		input.Shared = &v
+	}
 	var b client.Book
 	if err := r.client.Post(ctx, "/v1/books", input, &b); err != nil {
 		resp.Diagnostics.AddError("Error creating book", err.Error())
@@ -85,10 +103,15 @@ func (r *BookResource) Create(ctx context.Context, req resource.CreateRequest, r
 func (r *BookResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state BookResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-	if resp.Diagnostics.HasError() { return }
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	var b client.Book
 	if err := r.client.Get(ctx, "/v1/books/"+state.ID.ValueString(), &b); err != nil {
-		if client.IsNotFound(err) { resp.State.RemoveResource(ctx); return }
+		if client.IsNotFound(err) {
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError("Error reading book", err.Error())
 		return
 	}
@@ -99,15 +122,38 @@ func (r *BookResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	var plan, state BookResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-	if resp.Diagnostics.HasError() { return }
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	input := client.BookUpdateInput{}
-	if !plan.Title.Equal(state.Title) { v := plan.Title.ValueString(); input.Title = &v }
-	if !plan.URL.Equal(state.URL) { v := plan.URL.ValueString(); input.URL = &v }
-	if !plan.ImageURL.Equal(state.ImageURL) { v := plan.ImageURL.ValueString(); input.ImageURL = &v }
-	if !plan.Description.Equal(state.Description) { v := plan.Description.ValueString(); input.Description = &v }
-	if !plan.Year.Equal(state.Year) { v := int(plan.Year.ValueInt64()); input.Year = &v }
-	if !plan.ISBN.Equal(state.ISBN) { v := plan.ISBN.ValueString(); input.ISBN = &v }
-	if !plan.Shared.Equal(state.Shared) { v := plan.Shared.ValueBool(); input.Shared = &v }
+	if !plan.Title.Equal(state.Title) {
+		v := plan.Title.ValueString()
+		input.Title = &v
+	}
+	if !plan.URL.Equal(state.URL) {
+		v := plan.URL.ValueString()
+		input.URL = &v
+	}
+	if !plan.ImageURL.Equal(state.ImageURL) {
+		v := plan.ImageURL.ValueString()
+		input.ImageURL = &v
+	}
+	if !plan.Description.Equal(state.Description) {
+		v := plan.Description.ValueString()
+		input.Description = &v
+	}
+	if !plan.Year.Equal(state.Year) {
+		v := int(plan.Year.ValueInt64())
+		input.Year = &v
+	}
+	if !plan.ISBN.Equal(state.ISBN) {
+		v := plan.ISBN.ValueString()
+		input.ISBN = &v
+	}
+	if !plan.Shared.Equal(state.Shared) {
+		v := plan.Shared.ValueBool()
+		input.Shared = &v
+	}
 	var b client.Book
 	if err := r.client.Patch(ctx, "/v1/books/"+state.ID.ValueString(), input, &b); err != nil {
 		resp.Diagnostics.AddError("Error updating book", err.Error())
@@ -119,7 +165,9 @@ func (r *BookResource) Update(ctx context.Context, req resource.UpdateRequest, r
 func (r *BookResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state BookResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-	if resp.Diagnostics.HasError() { return }
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	if err := r.client.Delete(ctx, "/v1/books/"+state.ID.ValueString()); err != nil {
 		resp.Diagnostics.AddError("Error deleting book", err.Error())
 	}

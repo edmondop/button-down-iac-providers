@@ -104,13 +104,16 @@ func (r *AutomationResource) Update(ctx context.Context, req resource.UpdateRequ
 	}
 	input := client.AutomationUpdateInput{}
 	if !plan.Name.Equal(state.Name) {
-		v := plan.Name.ValueString(); input.Name = &v
+		v := plan.Name.ValueString()
+		input.Name = &v
 	}
 	if !plan.Status.Equal(state.Status) {
-		v := plan.Status.ValueString(); input.Status = &v
+		v := plan.Status.ValueString()
+		input.Status = &v
 	}
 	if !plan.Trigger.Equal(state.Trigger) {
-		v := plan.Trigger.ValueString(); input.Trigger = &v
+		v := plan.Trigger.ValueString()
+		input.Trigger = &v
 	}
 	var a client.Automation
 	if err := r.client.Patch(ctx, "/v1/automations/"+state.ID.ValueString(), input, &a); err != nil {

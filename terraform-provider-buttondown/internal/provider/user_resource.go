@@ -44,9 +44,9 @@ func (r *UserResource) Schema(_ context.Context, _ resource.SchemaRequest, resp 
 	resp.Schema = schema.Schema{
 		Description: "Manages a Buttondown team member.",
 		Attributes: map[string]schema.Attribute{
-			"id":            schema.StringAttribute{Computed: true, PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()}},
-			"email_address": schema.StringAttribute{Required: true, Description: "Team member email address."},
-			"status":        schema.StringAttribute{Computed: true, Description: "Invitation status."},
+			"id":                       schema.StringAttribute{Computed: true, PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()}},
+			"email_address":            schema.StringAttribute{Required: true, Description: "Team member email address."},
+			"status":                   schema.StringAttribute{Computed: true, Description: "Invitation status."},
 			"permission_subscriber":    schema.StringAttribute{Optional: true, Computed: true, Description: "Subscriber access: none, read, write."},
 			"permission_email":         schema.StringAttribute{Optional: true, Computed: true, Description: "Email access: none, read, write."},
 			"permission_sending":       schema.StringAttribute{Optional: true, Computed: true, Description: "Sending access: none, read, write."},
@@ -60,7 +60,9 @@ func (r *UserResource) Schema(_ context.Context, _ resource.SchemaRequest, resp 
 }
 
 func (r *UserResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil { return }
+	if req.ProviderData == nil {
+		return
+	}
 	c, ok := req.ProviderData.(*client.Client)
 	if !ok {
 		resp.Diagnostics.AddError("Unexpected type", fmt.Sprintf("Expected *client.Client, got: %T", req.ProviderData))
@@ -71,21 +73,39 @@ func (r *UserResource) Configure(_ context.Context, req resource.ConfigureReques
 
 func permissionsFromModel(m *UserResourceModel) client.Permissions {
 	p := client.Permissions{}
-	if !m.SubscriberPermission.IsNull() { p.Subscriber = m.SubscriberPermission.ValueString() }
-	if !m.EmailPermission.IsNull() { p.Email = m.EmailPermission.ValueString() }
-	if !m.SendingPermission.IsNull() { p.Sending = m.SendingPermission.ValueString() }
-	if !m.StylingPermission.IsNull() { p.Styling = m.StylingPermission.ValueString() }
-	if !m.AdminPermission.IsNull() { p.Administrivia = m.AdminPermission.ValueString() }
-	if !m.AutomationsPermission.IsNull() { p.Automations = m.AutomationsPermission.ValueString() }
-	if !m.SurveysPermission.IsNull() { p.Surveys = m.SurveysPermission.ValueString() }
-	if !m.FormsPermission.IsNull() { p.Forms = m.FormsPermission.ValueString() }
+	if !m.SubscriberPermission.IsNull() {
+		p.Subscriber = m.SubscriberPermission.ValueString()
+	}
+	if !m.EmailPermission.IsNull() {
+		p.Email = m.EmailPermission.ValueString()
+	}
+	if !m.SendingPermission.IsNull() {
+		p.Sending = m.SendingPermission.ValueString()
+	}
+	if !m.StylingPermission.IsNull() {
+		p.Styling = m.StylingPermission.ValueString()
+	}
+	if !m.AdminPermission.IsNull() {
+		p.Administrivia = m.AdminPermission.ValueString()
+	}
+	if !m.AutomationsPermission.IsNull() {
+		p.Automations = m.AutomationsPermission.ValueString()
+	}
+	if !m.SurveysPermission.IsNull() {
+		p.Surveys = m.SurveysPermission.ValueString()
+	}
+	if !m.FormsPermission.IsNull() {
+		p.Forms = m.FormsPermission.ValueString()
+	}
 	return p
 }
 
 func (r *UserResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan UserResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
-	if resp.Diagnostics.HasError() { return }
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	input := client.UserInput{
 		EmailAddress: plan.EmailAddress.ValueString(),
 		Permissions:  permissionsFromModel(&plan),
@@ -101,10 +121,15 @@ func (r *UserResource) Create(ctx context.Context, req resource.CreateRequest, r
 func (r *UserResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state UserResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-	if resp.Diagnostics.HasError() { return }
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	var u client.User
 	if err := r.client.Get(ctx, "/v1/users/"+state.ID.ValueString(), &u); err != nil {
-		if client.IsNotFound(err) { resp.State.RemoveResource(ctx); return }
+		if client.IsNotFound(err) {
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError("Error reading user", err.Error())
 		return
 	}
@@ -115,7 +140,9 @@ func (r *UserResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	var plan, state UserResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-	if resp.Diagnostics.HasError() { return }
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	perms := permissionsFromModel(&plan)
 	input := client.UserUpdateInput{
 		Permissions: map[string]string{
@@ -136,7 +163,9 @@ func (r *UserResource) Update(ctx context.Context, req resource.UpdateRequest, r
 func (r *UserResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state UserResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-	if resp.Diagnostics.HasError() { return }
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	if err := r.client.Delete(ctx, "/v1/users/"+state.ID.ValueString()); err != nil {
 		resp.Diagnostics.AddError("Error deleting user", err.Error())
 	}
@@ -149,14 +178,14 @@ func (r *UserResource) ImportState(ctx context.Context, req resource.ImportState
 func userToModel(u *client.User) *UserResourceModel {
 	return &UserResourceModel{
 		ID: types.StringValue(u.ID), EmailAddress: types.StringValue(u.EmailAddress),
-		Status: types.StringValue(u.Status),
-		SubscriberPermission: types.StringValue(u.Permissions.Subscriber),
-		EmailPermission: types.StringValue(u.Permissions.Email),
-		SendingPermission: types.StringValue(u.Permissions.Sending),
-		StylingPermission: types.StringValue(u.Permissions.Styling),
-		AdminPermission: types.StringValue(u.Permissions.Administrivia),
+		Status:                types.StringValue(u.Status),
+		SubscriberPermission:  types.StringValue(u.Permissions.Subscriber),
+		EmailPermission:       types.StringValue(u.Permissions.Email),
+		SendingPermission:     types.StringValue(u.Permissions.Sending),
+		StylingPermission:     types.StringValue(u.Permissions.Styling),
+		AdminPermission:       types.StringValue(u.Permissions.Administrivia),
 		AutomationsPermission: types.StringValue(u.Permissions.Automations),
-		SurveysPermission: types.StringValue(u.Permissions.Surveys),
-		FormsPermission: types.StringValue(u.Permissions.Forms),
+		SurveysPermission:     types.StringValue(u.Permissions.Surveys),
+		FormsPermission:       types.StringValue(u.Permissions.Forms),
 	}
 }
